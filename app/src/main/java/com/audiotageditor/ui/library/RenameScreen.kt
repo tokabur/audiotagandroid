@@ -87,7 +87,9 @@ fun RenameScreen(
         listOf(
             "[Artist] - [Title]",
             "[Title]",
-            "[Track] - [Title]"
+            "[Album] - [Artist] - [Title]",
+            "[Track] - [Title]",
+            "[Track] - [Artist] - [Title]"
         )
     }
 
@@ -191,59 +193,31 @@ fun RenameScreen(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 Text(
-                                    text = "Rename Pattern Template",
+                                    text = "Select Rename Pattern Template",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
 
-                                OutlinedTextField(
-                                    value = renameTemplateInput,
-                                    onValueChange = { renameTemplateInput = it },
-                                    label = { Text("Template Pattern") },
-                                    placeholder = { Text("[Artist] - [Title]") },
-                                    singleLine = true,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-
-                                Text(
-                                    text = "Quick Presets:",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                // Presets horizontal scroll row
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .horizontalScroll(rememberScrollState()),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    presets.forEach { preset ->
-                                        SuggestionChip(
-                                            onClick = { renameTemplateInput = preset },
-                                            label = { Text(preset, style = MaterialTheme.typography.bodySmall) },
-                                            shape = RoundedCornerShape(8.dp)
+                                presets.forEach { preset ->
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable { renameTemplateInput = preset }
+                                            .background(
+                                                color = if (renameTemplateInput == preset) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+                                                shape = RoundedCornerShape(8.dp)
+                                            )
+                                            .padding(16.dp)
+                                    ) {
+                                        Text(
+                                            text = preset,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            fontWeight = if (renameTemplateInput == preset) FontWeight.Bold else FontWeight.Normal,
+                                            color = if (renameTemplateInput == preset) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
                                         )
                                     }
-                                }
-
-                                @OptIn(ExperimentalLayoutApi::class)
-                                FlowRow(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    listOf("[Artist]", "[Title]", "[Album]", "[Track]", "[Year]")
-                                        .forEach { placeholder ->
-                                            AssistChip(
-                                                onClick = { renameTemplateInput = renameTemplateInput.plus(placeholder) },
-                                                label = { Text(placeholder, style = MaterialTheme.typography.bodySmall) },
-                                                shape = RoundedCornerShape(6.dp)
-                                            )
-                                        }
                                 }
                             }
                         }

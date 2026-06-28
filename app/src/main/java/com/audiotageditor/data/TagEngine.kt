@@ -15,6 +15,17 @@ import java.util.Locale
 object TagEngine {
     private const val TAG = "TagEngine"
     private val kTagLib by lazy { KTagLib() }
+    
+    init {
+        try {
+            val file = File("/tmp/ktaglib_methods.txt")
+            val sb = StringBuilder()
+            for (m in KTagLib::class.java.methods) {
+                sb.append(m.name).append(" ").append(m.parameterTypes.map { it.name }).append("\n")
+            }
+            file.writeText(sb.toString())
+        } catch(e: Exception) {}
+    }
 
     private fun sanitizeExtension(ext: String): String {
         val clean = ext.trim().lowercase(Locale.US)
@@ -297,6 +308,7 @@ object TagEngine {
                 if (writePfd != null) {
                     dupPfd = writePfd.dup()
                     rawFd = dupPfd.detachFd()
+                    
                     writeSuccess = kTagLib.writeMetadata(rawFd, newMap, ext)
                     success = true
                 }
@@ -319,6 +331,19 @@ object TagEngine {
                     } catch (e: Exception) {
                         // ignore
                     }
+                }
+            }
+            
+            if (removeCover) {
+                try {
+                    val f = org.jaudiotagger.audio.AudioFileIO.read(tempFile)
+                    val t = f.tag
+                    if (t != null) {
+                        t.deleteArtworkField()
+                        org.jaudiotagger.audio.AudioFileIO.write(f)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to remove cover with jaudiotagger", e)
                 }
             }
             

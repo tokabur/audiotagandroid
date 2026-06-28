@@ -1,25 +1,35 @@
 package com.audiotageditor.ui.settings
 
-import android.widget.Toast
-import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.audiotageditor.data.SettingsManager
 import com.audiotageditor.theme.ThemeManager
 import com.audiotageditor.theme.ThemeMode
 
@@ -29,30 +39,17 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val scrollState = rememberScrollState()
-
-    // Collect settings states
-    val tagToFilename by SettingsManager.tagToFilenameTemplate.collectAsState()
-    val currentThemeMode by ThemeManager.themeMode.collectAsState()
-    val useDynamicColorSetting by ThemeManager.useDynamicColor.collectAsState()
+    val themeMode by ThemeManager.themeMode.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        text = "Settings",
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                },
+                title = { Text("Settings", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.primary
+                            contentDescription = "Navigate back"
                         )
                     }
                 },
@@ -67,236 +64,55 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(scrollState)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
         ) {
-            // Theme Section
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Palette,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Appearance & Theme",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+            Text(
+                text = "Theme",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
 
-                    Text(
-                        text = "Choose your preferred application visual style and color accents.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 16.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        shape = RoundedCornerShape(12.dp)
                     )
-
-                    // Theme choices
+                    .padding(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     ThemeMode.entries.forEach { mode ->
-                        val isSelected = currentThemeMode == mode
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                        val isSelected = themeMode == mode
+                        val text = when (mode) {
+                            ThemeMode.SYSTEM -> "System"
+                            ThemeMode.LIGHT -> "Light"
+                            ThemeMode.DARK -> "Dark"
+                        }
+
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                .weight(1f)
+                                .padding(horizontal = 4.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(
+                                    if (isSelected) MaterialTheme.colorScheme.primaryContainer else androidx.compose.ui.graphics.Color.Transparent
+                                )
+                                .clickable { ThemeManager.setThemeMode(mode) }
+                                .padding(vertical = 12.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            RadioButton(
-                                selected = isSelected,
-                                onClick = { ThemeManager.setThemeMode(mode) }
-                            )
-                            Icon(
-                                imageVector = when(mode) {
-                                    ThemeMode.SYSTEM -> Icons.Default.Settings
-                                    ThemeMode.LIGHT -> Icons.Default.LightMode
-                                    ThemeMode.DARK -> Icons.Default.DarkMode
-                                },
-                                contentDescription = null,
-                                tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
                             Text(
-                                text = when(mode) {
-                                    ThemeMode.SYSTEM -> "System Default"
-                                    ThemeMode.LIGHT -> "Light Theme"
-                                    ThemeMode.DARK -> "Dark Theme"
-                                },
+                                text = text,
                                 style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                            )
-                        }
-                    }
-
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Dynamic Colors",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = "Use Material You dynamic color system based on wallpaper colors",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                            Switch(
-                                checked = useDynamicColorSetting,
-                                onCheckedChange = { ThemeManager.setUseDynamicColor(it) }
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Tag-to-Filename Renaming Section
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DriveFileRenameOutline,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Tag-to-Filename Renaming",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Text(
-                        text = "Configure pattern template to rename audio files dynamically based on their tags metadata.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
-                    OutlinedTextField(
-                        value = tagToFilename,
-                        onValueChange = { SettingsManager.setTagToFilenameTemplate(it) },
-                        label = { Text("Rename Pattern Template") },
-                        placeholder = { Text("[Artist] - [Title]") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Placeholders: [Artist], [Title], [Album], [Track], [Year]",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Preset Chips
-                    Text(
-                        text = "Quick Presets:",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        val presets = listOf("[Artist] - [Title]", "[Title]", "[Track] - [Title]")
-                        presets.forEach { preset ->
-                            SuggestionChip(
-                                onClick = { SettingsManager.setTagToFilenameTemplate(preset) },
-                                label = { Text(preset) },
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Dynamic Preview
-                    val previewName = remember(tagToFilename) {
-                        var name = tagToFilename
-                            .replace("[Artist]", "Queen", ignoreCase = true)
-                            .replace("{Artist}", "Queen", ignoreCase = true)
-                            .replace("[Title]", "Bohemian Rhapsody", ignoreCase = true)
-                            .replace("{Title}", "Bohemian Rhapsody", ignoreCase = true)
-                            .replace("[Album]", "A Night at the Opera", ignoreCase = true)
-                            .replace("{Album}", "A Night at the Opera", ignoreCase = true)
-                            .replace("[Track]", "05", ignoreCase = true)
-                            .replace("{Track}", "05", ignoreCase = true)
-                            .replace("[Year]", "1975", ignoreCase = true)
-                            .replace("{Year}", "1975", ignoreCase = true)
-                        name = name.replace(Regex("[\\\\/:*?\"<>|]"), "_")
-                        "$name.mp3"
-                    }
-
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(
-                                text = "Preview:",
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Mock Metadata: Title=\"Bohemian Rhapsody\", Artist=\"Queen\", Track=\"05\", Year=\"1975\"",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = "Result: $previewName",
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }

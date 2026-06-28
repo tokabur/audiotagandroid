@@ -86,7 +86,7 @@ dependencies {
 
     // Audio Processing Engines
     implementation(libs.ktaglib)
-    // implementation(libs.jaudiotagger) // Kept on standby if you switch tag engines
+    implementation(libs.jaudiotagger) // Kept on standby if you switch tag engines
 
     // Serialization & Data
     implementation(libs.kotlinx.serialization.json)

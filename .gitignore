@@ -1,7 +1,8 @@
 *.iml
 .gradle
 .kotlin
-.build
+/build
+/docs
 app/build/
 .properties
 .env

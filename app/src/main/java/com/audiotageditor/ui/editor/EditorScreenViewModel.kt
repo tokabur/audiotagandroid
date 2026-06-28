@@ -53,7 +53,7 @@ class EditorScreenViewModel(private val repository: DataRepository) : ViewModel(
         val current = _uiState.value
         _uiState.value = current.copy(
             artist = value,
-            mixedFieldsAction = current.mixedFieldsAction + ("artist" to "OVERWRITE")
+            mixedFieldsAction = current.mixedFieldsAction + ("artist" to "CHOOSE")
         ) 
     }
     
@@ -61,7 +61,7 @@ class EditorScreenViewModel(private val repository: DataRepository) : ViewModel(
         val current = _uiState.value
         _uiState.value = current.copy(
             album = value,
-            mixedFieldsAction = current.mixedFieldsAction + ("album" to "OVERWRITE")
+            mixedFieldsAction = current.mixedFieldsAction + ("album" to "CHOOSE")
         ) 
     }
     
@@ -69,7 +69,7 @@ class EditorScreenViewModel(private val repository: DataRepository) : ViewModel(
         val current = _uiState.value
         _uiState.value = current.copy(
             year = value,
-            mixedFieldsAction = current.mixedFieldsAction + ("year" to "OVERWRITE")
+            mixedFieldsAction = current.mixedFieldsAction + ("year" to "CHOOSE")
         ) 
     }
     
@@ -77,7 +77,7 @@ class EditorScreenViewModel(private val repository: DataRepository) : ViewModel(
         val current = _uiState.value
         _uiState.value = current.copy(
             genre = value,
-            mixedFieldsAction = current.mixedFieldsAction + ("genre" to "OVERWRITE")
+            mixedFieldsAction = current.mixedFieldsAction + ("genre" to "CHOOSE")
         ) 
     }
     
@@ -87,7 +87,7 @@ class EditorScreenViewModel(private val repository: DataRepository) : ViewModel(
         val current = _uiState.value
         _uiState.value = current.copy(
             albumArtist = value,
-            mixedFieldsAction = current.mixedFieldsAction + ("albumArtist" to "OVERWRITE")
+            mixedFieldsAction = current.mixedFieldsAction + ("albumArtist" to "CHOOSE")
         ) 
     }
 
@@ -95,7 +95,7 @@ class EditorScreenViewModel(private val repository: DataRepository) : ViewModel(
         val current = _uiState.value
         _uiState.value = current.copy(
             comment = value,
-            mixedFieldsAction = current.mixedFieldsAction + ("comment" to "OVERWRITE")
+            mixedFieldsAction = current.mixedFieldsAction + ("comment" to "CHOOSE")
         ) 
     }
 
@@ -103,7 +103,7 @@ class EditorScreenViewModel(private val repository: DataRepository) : ViewModel(
         val current = _uiState.value
         _uiState.value = current.copy(
             description = value,
-            mixedFieldsAction = current.mixedFieldsAction + ("description" to "OVERWRITE")
+            mixedFieldsAction = current.mixedFieldsAction + ("description" to "CHOOSE")
         ) 
     }
 
@@ -111,7 +111,7 @@ class EditorScreenViewModel(private val repository: DataRepository) : ViewModel(
         val current = _uiState.value
         _uiState.value = current.copy(
             composer = value,
-            mixedFieldsAction = current.mixedFieldsAction + ("composer" to "OVERWRITE")
+            mixedFieldsAction = current.mixedFieldsAction + ("composer" to "CHOOSE")
         ) 
     }
 
@@ -119,7 +119,7 @@ class EditorScreenViewModel(private val repository: DataRepository) : ViewModel(
         val current = _uiState.value
         _uiState.value = current.copy(
             discNumber = value,
-            mixedFieldsAction = current.mixedFieldsAction + ("discNumber" to "OVERWRITE")
+            mixedFieldsAction = current.mixedFieldsAction + ("discNumber" to "CHOOSE")
         ) 
     }
     
@@ -129,15 +129,15 @@ class EditorScreenViewModel(private val repository: DataRepository) : ViewModel(
         val current = _uiState.value
         _uiState.value = current.copy(
             mixedFieldsAction = current.mixedFieldsAction + (field to action),
-            artist = if (field == "artist" && action != "OVERWRITE") "" else current.artist,
-            album = if (field == "album" && action != "OVERWRITE") "" else current.album,
-            albumArtist = if (field == "albumArtist" && action != "OVERWRITE") "" else current.albumArtist,
-            genre = if (field == "genre" && action != "OVERWRITE") "" else current.genre,
-            year = if (field == "year" && action != "OVERWRITE") "" else current.year,
-            comment = if (field == "comment" && action != "OVERWRITE") "" else current.comment,
-            description = if (field == "description" && action != "OVERWRITE") "" else current.description,
-            composer = if (field == "composer" && action != "OVERWRITE") "" else current.composer,
-            discNumber = if (field == "discNumber" && action != "OVERWRITE") "" else current.discNumber
+            artist = if (field == "artist" && action != "CHOOSE") "" else current.artist,
+            album = if (field == "album" && action != "CHOOSE") "" else current.album,
+            albumArtist = if (field == "albumArtist" && action != "CHOOSE") "" else current.albumArtist,
+            genre = if (field == "genre" && action != "CHOOSE") "" else current.genre,
+            year = if (field == "year" && action != "CHOOSE") "" else current.year,
+            comment = if (field == "comment" && action != "CHOOSE") "" else current.comment,
+            description = if (field == "description" && action != "CHOOSE") "" else current.description,
+            composer = if (field == "composer" && action != "CHOOSE") "" else current.composer,
+            discNumber = if (field == "discNumber" && action != "CHOOSE") "" else current.discNumber
         )
     }
 

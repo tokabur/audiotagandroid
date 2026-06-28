@@ -322,8 +322,8 @@ fun EditorFormContent(
                                 value = title,
                                 onValueChange = { viewModel.updateTitle(it) },
                                 label = "Title",
-                                isMixed = false,
-                                currentAction = "OVERWRITE",
+                                isBatch = false,
+                                currentAction = "CHOOSE",
                                 onActionChange = {}
                             )
                     }
@@ -333,8 +333,9 @@ fun EditorFormContent(
                             value = artist,
                             onValueChange = { viewModel.updateArtist(it) },
                             label = "Artist",
-                            isMixed = isBatch && mixedFields.contains("artist"),
-                            currentAction = mixedFieldsAction["artist"] ?: "OVERWRITE",
+                            isBatch = isBatch,
+                            sharedValues = if (isBatch) files.map { it.artist }.distinct().filter { it.isNotBlank() } else emptyList(),
+                            currentAction = mixedFieldsAction["artist"] ?: if (isBatch) "KEEP" else "CHOOSE",
                             onActionChange = { action -> viewModel.setMixedFieldAction("artist", action) }
                         )
 
@@ -343,8 +344,9 @@ fun EditorFormContent(
                             value = album,
                             onValueChange = { viewModel.updateAlbum(it) },
                             label = "Album",
-                            isMixed = isBatch && mixedFields.contains("album"),
-                            currentAction = mixedFieldsAction["album"] ?: "OVERWRITE",
+                            isBatch = isBatch,
+                            sharedValues = if (isBatch) files.map { it.album }.distinct().filter { it.isNotBlank() } else emptyList(),
+                            currentAction = mixedFieldsAction["album"] ?: if (isBatch) "KEEP" else "CHOOSE",
                             onActionChange = { action -> viewModel.setMixedFieldAction("album", action) }
                         )
 
@@ -353,8 +355,9 @@ fun EditorFormContent(
                             value = albumArtist,
                             onValueChange = { viewModel.updateAlbumArtist(it) },
                             label = "Album Artist",
-                            isMixed = isBatch && mixedFields.contains("albumArtist"),
-                            currentAction = mixedFieldsAction["albumArtist"] ?: "OVERWRITE",
+                            isBatch = isBatch,
+                            sharedValues = if (isBatch) files.map { it.albumArtist }.distinct().filter { it.isNotBlank() } else emptyList(),
+                            currentAction = mixedFieldsAction["albumArtist"] ?: if (isBatch) "KEEP" else "CHOOSE",
                             onActionChange = { action -> viewModel.setMixedFieldAction("albumArtist", action) }
                         )
 
@@ -363,8 +366,9 @@ fun EditorFormContent(
                             value = genre,
                             onValueChange = { viewModel.updateGenre(it) },
                             label = "Genre",
-                            isMixed = isBatch && mixedFields.contains("genre"),
-                            currentAction = mixedFieldsAction["genre"] ?: "OVERWRITE",
+                            isBatch = isBatch,
+                            sharedValues = if (isBatch) files.map { it.genre }.distinct().filter { it.isNotBlank() } else emptyList(),
+                            currentAction = mixedFieldsAction["genre"] ?: if (isBatch) "KEEP" else "CHOOSE",
                             onActionChange = { action -> viewModel.setMixedFieldAction("genre", action) }
                         )
 
@@ -373,8 +377,9 @@ fun EditorFormContent(
                             value = year,
                             onValueChange = { viewModel.updateYear(it) },
                             label = "Year",
-                            isMixed = isBatch && mixedFields.contains("year"),
-                            currentAction = mixedFieldsAction["year"] ?: "OVERWRITE",
+                            isBatch = isBatch,
+                            sharedValues = if (isBatch) files.map { it.year }.distinct().filter { it.isNotBlank() } else emptyList(),
+                            currentAction = mixedFieldsAction["year"] ?: if (isBatch) "KEEP" else "CHOOSE",
                             onActionChange = { action -> viewModel.setMixedFieldAction("year", action) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
@@ -385,8 +390,8 @@ fun EditorFormContent(
                                 value = track,
                                 onValueChange = { viewModel.updateTrack(it) },
                                 label = "Track Number",
-                                isMixed = false,
-                                currentAction = "OVERWRITE",
+                                isBatch = false,
+                                currentAction = "CHOOSE",
                                 onActionChange = {},
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
@@ -397,8 +402,9 @@ fun EditorFormContent(
                             value = discNumber,
                             onValueChange = { viewModel.updateDiscNumber(it) },
                             label = "Disc Number",
-                            isMixed = isBatch && mixedFields.contains("discNumber"),
-                            currentAction = mixedFieldsAction["discNumber"] ?: "OVERWRITE",
+                            isBatch = isBatch,
+                            sharedValues = if (isBatch) files.map { it.discNumber }.distinct().filter { it.isNotBlank() } else emptyList(),
+                            currentAction = mixedFieldsAction["discNumber"] ?: if (isBatch) "KEEP" else "CHOOSE",
                             onActionChange = { action -> viewModel.setMixedFieldAction("discNumber", action) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
@@ -408,8 +414,9 @@ fun EditorFormContent(
                             value = composer,
                             onValueChange = { viewModel.updateComposer(it) },
                             label = "Composer",
-                            isMixed = isBatch && mixedFields.contains("composer"),
-                            currentAction = mixedFieldsAction["composer"] ?: "OVERWRITE",
+                            isBatch = isBatch,
+                            sharedValues = if (isBatch) files.map { it.composer }.distinct().filter { it.isNotBlank() } else emptyList(),
+                            currentAction = mixedFieldsAction["composer"] ?: if (isBatch) "KEEP" else "CHOOSE",
                             onActionChange = { action -> viewModel.setMixedFieldAction("composer", action) }
                         )
 
@@ -418,8 +425,9 @@ fun EditorFormContent(
                             value = comment,
                             onValueChange = { viewModel.updateComment(it) },
                             label = "Comment",
-                            isMixed = isBatch && mixedFields.contains("comment"),
-                            currentAction = mixedFieldsAction["comment"] ?: "OVERWRITE",
+                            isBatch = isBatch,
+                            sharedValues = if (isBatch) files.map { it.comment }.distinct().filter { it.isNotBlank() } else emptyList(),
+                            currentAction = mixedFieldsAction["comment"] ?: if (isBatch) "KEEP" else "CHOOSE",
                             onActionChange = { action -> viewModel.setMixedFieldAction("comment", action) }
                         )
 
@@ -428,8 +436,9 @@ fun EditorFormContent(
                             value = description,
                             onValueChange = { viewModel.updateDescription(it) },
                             label = "Description",
-                            isMixed = isBatch && mixedFields.contains("description"),
-                            currentAction = mixedFieldsAction["description"] ?: "OVERWRITE",
+                            isBatch = isBatch,
+                            sharedValues = if (isBatch) files.map { it.description }.distinct().filter { it.isNotBlank() } else emptyList(),
+                            currentAction = mixedFieldsAction["description"] ?: if (isBatch) "KEEP" else "CHOOSE",
                             onActionChange = { action -> viewModel.setMixedFieldAction("description", action) }
                         )
 
@@ -438,11 +447,7 @@ fun EditorFormContent(
                             Spacer(modifier = Modifier.height(8.dp))
                             val file = files.first()
                             AdvancedTechnicalInfoCard(
-                                format = file.format,
-                                bitrate = file.bitrate,
-                                sampleRate = file.sampleRate,
-                                size = file.sizeFormatted,
-                                duration = file.durationFormatted
+                                file = file
                             )
                     }
                 }
@@ -450,11 +455,7 @@ fun EditorFormContent(
 
 @Composable
 fun AdvancedTechnicalInfoCard(
-    format: String,
-    bitrate: String,
-    sampleRate: String,
-    size: String,
-    duration: String
+    file: AudioMetadata
 ) {
     Card(
         modifier = Modifier
@@ -483,17 +484,22 @@ fun AdvancedTechnicalInfoCard(
             Spacer(modifier = Modifier.height(12.dp))
             
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                TechnicalInfoItem(label = "Filename", value = file.fileName, modifier = Modifier.fillMaxWidth())
+                TechnicalInfoItem(label = "Full File Path", value = android.net.Uri.parse(file.uriString).path ?: file.uriString, modifier = Modifier.fillMaxWidth())
+
+                val isLossless = file.cleanFormat in listOf("FLAC", "ALAC", "WAV", "APE", "AIFF")
+
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    TechnicalInfoItem(label = "Format / Codec", value = format.substringAfterLast("/").uppercase(), modifier = Modifier.weight(1f))
-                    TechnicalInfoItem(label = "Bitrate", value = bitrate, modifier = Modifier.weight(1f))
+                    TechnicalInfoItem(label = "Codec", value = file.cleanFormat, modifier = Modifier.weight(1f))
+                    TechnicalInfoItem(label = "Quality", value = if (isLossless) "Lossless" else "Lossy", modifier = Modifier.weight(1f))
                 }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    TechnicalInfoItem(label = "Sample Rate", value = sampleRate, modifier = Modifier.weight(1f))
-                    TechnicalInfoItem(label = "File Size", value = size, modifier = Modifier.weight(1f))
+                    TechnicalInfoItem(label = "Bitrate", value = file.bitrate, modifier = Modifier.weight(1f))
+                    TechnicalInfoItem(label = "Sample Rate", value = file.sampleRate, modifier = Modifier.weight(1f))
                 }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    TechnicalInfoItem(label = "Duration", value = duration, modifier = Modifier.weight(1f))
-                    Spacer(modifier = Modifier.weight(1f))
+                    TechnicalInfoItem(label = "File Size", value = file.sizeFormatted, modifier = Modifier.weight(1f))
+                    TechnicalInfoItem(label = "Duration", value = file.durationFormatted, modifier = Modifier.weight(1f))
                 }
             }
         }
@@ -517,14 +523,15 @@ fun TechnicalInfoItem(label: String, value: String, modifier: Modifier = Modifie
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun EditorTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
-    isMixed: Boolean,
-    currentAction: String, // "KEEP", "BLANK", "OVERWRITE"
+    isBatch: Boolean,
+    sharedValues: List<String> = emptyList(),
+    currentAction: String, // "KEEP", "BLANK", "CHOOSE"
     onActionChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
@@ -543,95 +550,53 @@ fun EditorTextField(
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            if (isMixed) {
+            if (isBatch) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    modifier = Modifier.clip(RoundedCornerShape(8.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh),
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(12.dp)
-                    )
-                    Text(
-                        text = "Mixed Values",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontWeight = FontWeight.Bold
-                    )
+                    val blankSelected = currentAction == "BLANK"
+                    Box(
+                        modifier = Modifier
+                            .clickable { onActionChange(if (blankSelected) "KEEP" else "BLANK") }
+                            .background(if (blankSelected) MaterialTheme.colorScheme.errorContainer else Color.Transparent)
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = "Blank",
+                            fontSize = 12.sp,
+                            fontWeight = if (blankSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (blankSelected) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clickable { onActionChange(if (currentAction == "CHOOSE") "KEEP" else "CHOOSE") }
+                            .background(if (currentAction == "CHOOSE") MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = "Choose",
+                            fontSize = 12.sp,
+                            fontWeight = if (currentAction == "CHOOSE") FontWeight.Bold else FontWeight.Medium,
+                            color = if (currentAction == "CHOOSE") MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
         }
 
-        if (isMixed) {
-            val secondaryContainer = MaterialTheme.colorScheme.secondaryContainer
-            val onSecondaryContainer = MaterialTheme.colorScheme.onSecondaryContainer
-            val errorContainer = MaterialTheme.colorScheme.errorContainer
-            val onErrorContainer = MaterialTheme.colorScheme.onErrorContainer
-            val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-            val onPrimaryContainer = MaterialTheme.colorScheme.onPrimaryContainer
-            
-            val keepChipColors = InputChipDefaults.inputChipColors(
-                selectedContainerColor = secondaryContainer,
-                selectedLabelColor = onSecondaryContainer
-            )
-            val blankChipColors = InputChipDefaults.inputChipColors(
-                selectedContainerColor = errorContainer,
-                selectedLabelColor = onErrorContainer
-            )
-            val overwriteChipColors = InputChipDefaults.inputChipColors(
-                selectedContainerColor = primaryContainer,
-                selectedLabelColor = onPrimaryContainer
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 2.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                // Keep Chip
-                InputChip(
-                    selected = currentAction == "KEEP",
-                    onClick = { onActionChange("KEEP") },
-                    label = { Text("Keep Original", style = MaterialTheme.typography.bodySmall) },
-                    colors = keepChipColors,
-                    shape = RoundedCornerShape(8.dp)
-                )
-
-                // Blank Chip
-                InputChip(
-                    selected = currentAction == "BLANK",
-                    onClick = { onActionChange("BLANK") },
-                    label = { Text("Set Blank", style = MaterialTheme.typography.bodySmall) },
-                    colors = blankChipColors,
-                    shape = RoundedCornerShape(8.dp)
-                )
-
-                // Overwrite / Custom Chip (optional, auto-activated when typing)
-                InputChip(
-                    selected = currentAction == "OVERWRITE",
-                    onClick = { onActionChange("OVERWRITE") },
-                    label = { Text("Overwrite", style = MaterialTheme.typography.bodySmall) },
-                    colors = overwriteChipColors,
-                    shape = RoundedCornerShape(8.dp)
-                )
-            }
-        }
-
         val placeholderText = when {
-            isMixed && currentAction == "KEEP" -> "Keeping original values (multiple detected)"
-            isMixed && currentAction == "BLANK" -> "Clearing field (will be saved as blank)"
-            isMixed && currentAction == "OVERWRITE" -> "Enter custom value to overwrite"
+            isBatch && currentAction == "KEEP" -> "Keep existing values"
+            isBatch && currentAction == "BLANK" -> "Field will be cleared"
+            isBatch && currentAction == "CHOOSE" -> "Enter custom value or select below"
             else -> "Enter $label"
         }
 
-        val handleChange = remember(onValueChange, onActionChange, isMixed, currentAction) {
+        val handleChange = remember(onValueChange, onActionChange, isBatch, currentAction) {
             { newValue: String ->
                 onValueChange(newValue)
-                if (isMixed && currentAction != "OVERWRITE") {
-                    onActionChange("OVERWRITE")
+                if (isBatch && currentAction != "CHOOSE") {
+                    onActionChange("CHOOSE")
                 }
             }
         }
@@ -655,9 +620,9 @@ fun EditorTextField(
         )
 
         TextField(
-            value = value,
+            value = if (isBatch && currentAction != "CHOOSE") "" else value,
             onValueChange = handleChange,
-            enabled = !isMixed || currentAction == "OVERWRITE",
+            enabled = !isBatch || currentAction == "CHOOSE",
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
@@ -675,5 +640,30 @@ fun EditorTextField(
             colors = textFieldColors,
             singleLine = true
         )
+
+        if (isBatch && currentAction == "CHOOSE" && sharedValues.isNotEmpty()) {
+            androidx.compose.foundation.layout.FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                sharedValues.forEach { suggestion ->
+                    val isSelected = suggestion == value
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .clickable { handleChange(suggestion) }
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = suggestion.ifBlank { "(Empty)" },
+                            fontSize = 12.sp,
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+        }
     }
 }

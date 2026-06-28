@@ -13,6 +13,7 @@ import com.audiotageditor.ui.library.LibraryScreenViewModel
 import com.audiotageditor.ui.library.RenameScreen
 import com.audiotageditor.ui.editor.EditorScreen
 import com.audiotageditor.ui.editor.EditorScreenViewModel
+import com.audiotageditor.ui.settings.SettingsScreen
 
 @Composable
 fun MainNavigation() {
@@ -35,6 +36,9 @@ fun MainNavigation() {
                     repository.setSelectedUris(uris)
                     navController.navigate("rename")
                 },
+                onNavigateToSettings = {
+                    navController.navigate("settings")
+                },
                 viewModel = libraryViewModel,
                 modifier = Modifier
             )
@@ -56,6 +60,12 @@ fun MainNavigation() {
                 selectedUris = uris,
                 onNavigateBack = { navController.popBackStack() },
                 viewModel = libraryViewModel,
+                modifier = Modifier
+            )
+        }
+        composable(route = "settings") {
+            SettingsScreen(
+                onNavigateBack = { navController.popBackStack() },
                 modifier = Modifier
             )
         }

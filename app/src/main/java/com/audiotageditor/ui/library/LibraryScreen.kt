@@ -47,23 +47,23 @@ import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SettingsBrightness
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -92,6 +92,7 @@ import com.audiotageditor.theme.ThemeMode
 fun LibraryScreen(
     onEditSelected: (List<String>) -> Unit,
     onNavigateToRename: (List<String>) -> Unit,
+    onNavigateToSettings: () -> Unit,
     viewModel: LibraryScreenViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -101,10 +102,6 @@ fun LibraryScreen(
     val selectedCount by remember { derivedStateOf { selectedUris.size } }
     val isLoading by viewModel.isLoading.collectAsState()
     val currentFolderUri by viewModel.currentFolderUri.collectAsState()
-
-    var menuExpanded by remember { mutableStateOf(false) }
-
-    val themeMode by ThemeManager.themeMode.collectAsState()
 
     // Launcher for individual audio files selection
     val fileLauncher = rememberLauncherForActivityResult(
@@ -173,78 +170,12 @@ fun LibraryScreen(
                         }
                     }
 
-                    // Floating Overflow Menu Button
-                    Box {
-                        IconButton(onClick = { menuExpanded = true }) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = "More options",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = menuExpanded,
-                            onDismissRequest = { menuExpanded = false },
-                            modifier = Modifier.padding(horizontal = 4.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                                    .background(
-                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .padding(4.dp)
-                            ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    ThemeMode.entries.forEach { mode ->
-                                        val isSelected = themeMode == mode
-                                        val text = when (mode) {
-                                            ThemeMode.SYSTEM -> "System"
-                                            ThemeMode.LIGHT -> "Light"
-                                            ThemeMode.DARK -> "Dark"
-                                        }
-
-                                        Box(
-                                            modifier = Modifier
-                                                .clip(RoundedCornerShape(6.dp))
-                                                .background(
-                                                    if (isSelected) MaterialTheme.colorScheme.surface else androidx.compose.ui.graphics.Color.Transparent
-                                                )
-                                                .clickable { ThemeManager.setThemeMode(mode) }
-                                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = text,
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                            HorizontalDivider(
-                                modifier = Modifier.padding(vertical = 4.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Rename Files") },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.DriveFileRenameOutline,
-                                        contentDescription = null
-                                    )
-                                },
-                                enabled = selectedCount > 0,
-                                onClick = {
-                                    menuExpanded = false
-                                    onNavigateToRename(selectedUris.toList())
-                                }
-                            )
-                        }
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -252,33 +183,57 @@ fun LibraryScreen(
                 )
             )
         },
-        floatingActionButton = {
+        bottomBar = {
             AnimatedVisibility(
                 visible = selectedCount > 0,
-                enter = scaleIn() + fadeIn(),
-                exit = scaleOut() + fadeOut()
+                enter = androidx.compose.animation.slideInVertically(initialOffsetY = { it }),
+                exit = androidx.compose.animation.slideOutVertically(targetOffsetY = { it })
             ) {
-                ExtendedFloatingActionButton(
-                    onClick = { onEditSelected(selectedUris.toList()) },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.padding(bottom = 16.dp)
+                BottomAppBar(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = if (selectedCount == 1) Icons.Default.Edit else Icons.Default.AutoAwesome,
-                            contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = if (selectedCount == 1) "Edit Selected" else "Batch Edit",
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                        TextButton(
+                            onClick = { onEditSelected(selectedUris.toList()) }
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(imageVector = if (selectedCount == 1) Icons.Default.Edit else Icons.Default.AutoAwesome, contentDescription = "Edit")
+                                Text("Edit")
+                            }
+                        }
+                        
+                        TextButton(
+                            onClick = { onNavigateToRename(selectedUris.toList()) }
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(imageVector = Icons.Default.DriveFileRenameOutline, contentDescription = "Rename")
+                                Text("Rename")
+                            }
+                        }
+                        
+                        TextButton(
+                            onClick = { /* TODO: Apply pending inline modifications */ }
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(imageVector = Icons.Default.Save, contentDescription = "Save Changes")
+                                Text("Save")
+                            }
+                        }
+                        
+                        TextButton(
+                            onClick = { viewModel.deselectAll() }
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(imageVector = Icons.Default.Deselect, contentDescription = "Clear")
+                                Text("Clear")
+                            }
+                        }
                     }
                 }
             }
